@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>コードウィザード - ストーリーで学ぶプログラミング</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .game-area {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            animation: slideInUp 1s ease-out;
+        }
+
+        .story-section {
+            margin-bottom: 30px;
+        }
+
+        .story-text {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            border-left: 4px solid #ffd700;
+        }
+
+        .challenge {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .challenge h3 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .code-input {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #ffd700;
+            border-radius: 8px;
+            padding: 15px;
+            color: white;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            width: 100%;
+            margin: 10px 0;
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .code-input:focus {
+            outline: none;
+            border-color: #fff;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #333;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .progress-bar {
+            background: rgba(0, 0, 0, 0.3);
+            height: 10px;
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #ffd700, #ffed4e);
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .result.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .result.success {
+            background: rgba(76, 175, 80, 0.3);
+            border: 2px solid #4caf50;
+        }
+
+        .result.error {
+            background: rgba(244, 67, 54, 0.3);
+            border: 2px solid #f44336;
+        }
+
+        .concept-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #64b5f6;
+        }
+
+        .concept-box h4 {
+            color: #64b5f6;
+            margin-bottom: 10px;
+        }
+
+        .wizard-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin-right: 15px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .level-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .level-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 10px 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .level-btn.active {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #333;
+            border-color: #ffd700;
+        }
+
+        .level-btn:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .game-area {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>🧙‍♂️ コードウィザード</h1>
+            <p>魔法の森でプログラミングを学ぼう！</p>
+        </div>
+
+        <div class="level-selector">
+            <button class="level-btn active" onclick="selectLevel(1)">レベル1: 変数の魔法</button>
+            <button class="level-btn" onclick="selectLevel(2)">レベル2: 条件の呪文</button>
+            <button class="level-btn" onclick="selectLevel(3)">レベル3: ループの秘術</button>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+
+        <div class="game-area" id="gameArea">
+            <!-- レベル1: 変数 -->
+            <div id="level1" class="level-content">
+                <div class="story-section">
+                    <div class="story-text">
+                        <div class="wizard-avatar">🧙‍♂️</div>
+                        <strong>魔法使いの師匠：</strong> 「ようこそ、若き魔法使いよ！魔法の森で迷子になった動物たちを助けるために、変数という魔法を覚えよう。変数は魔法の箱のようなもので、大切な情報を保存できるのじゃ。」
+                    </div>
+                </div>
+
+                <div class="concept-box">
+                    <h4>📚 変数とは？</h4>
+                    <p>変数は値を保存する容器です。例えば、<code>name = "太郎"</code> のように名前を保存したり、<code>age = 15</code> のように年齢を保存できます。</p>
+                </div>
+
+                <div class="challenge">
+                    <h3>🐰 チャレンジ1: うさぎを助けよう！</h3>
+                    <p>迷子のうさぎの名前を変数に保存して、魔法の呪文を完成させてください。</p>
+                    <textarea class="code-input" id="code1" placeholder='例: animal_name = "うさぎ"'></textarea>
+                    <button class="btn" onclick="checkCode(1)">呪文を唱える ✨</button>
+                </div>
+
+                <div class="result" id="result1"></div>
+            </div>
+
+            <!-- レベル2: 条件分岐 -->
+            <div id="level2" class="level-content hidden">
+                <div class="story-section">
+                    <div class="story-text">
+                        <div class="wizard-avatar">🧙‍♂️</div>
+                        <strong>魔法使いの師匠：</strong> 「素晴らしい！今度は条件の魔法を学ぼう。『もし〜なら』という魔法で、状況に応じて異なる行動を取れるのじゃ。森の扉は特定の条件でしか開かないのじゃよ。」
+                    </div>
+                </div>
+
+                <div class="concept-box">
+                    <h4>🔀 条件分岐とは？</h4>
+                    <p>if文を使って条件によって処理を分けます。例えば、<code>if age >= 18:</code> のように「もし年齢が18歳以上なら」という条件を作れます。</p>
+                </div>
+
+                <div class="challenge">
+                    <h3>🚪 チャレンジ2: 魔法の扉を開けよう！</h3>
+                    <p>魔法の扉は「password」が「magic」の時だけ開きます。条件を書いてください。</p>
+                    <textarea class="code-input" id="code2" placeholder='例: if password == "magic":'></textarea>
+                    <button class="btn" onclick="checkCode(2)">扉を開ける 🚪</button>
+                </div>
+
+                <div class="result" id="result2"></div>
+            </div>
+
+            <!-- レベル3: ループ -->
+            <div id="level3" class="level-content hidden">
+                <div class="story-section">
+                    <div class="story-text">
+                        <div class="wizard-avatar">🧙‍♂️</div>
+                        <strong>魔法使いの師匠：</strong> 「最後の秘術、ループの魔法じゃ！同じ作業を何度も繰り返すとき、この魔法を使えば一度に済むのじゃ。森の花々に魔法をかけて咲かせてみよう！」
+                    </div>
+                </div>
+
+                <div class="concept-box">
+                    <h4>🔄 ループとは？</h4>
+                    <p>for文やwhile文を使って同じ処理を繰り返します。例えば、<code>for i in range(5):</code> で5回繰り返すことができます。</p>
+                </div>
+
+                <div class="challenge">
+                    <h3>🌸 チャレンジ3: 花を咲かせよう！</h3>
+                    <p>5つの花に魔法をかけて咲かせるループを書いてください。</p>
+                    <textarea class="code-input" id="code3" placeholder='例: for i in range(5):'></textarea>
+                    <button class="btn" onclick="checkCode(3)">花を咲かせる 🌸</button>
+                </div>
+
+                <div class="result" id="result3"></div>
+            </div>
+        </div>
+
+        <div class="game-area">
+            <h3>🏆 あなたの進捗</h3>
+            <div id="achievements">
+                <p>🎯 完了したレベル: <span id="completedLevels">0</span>/3</p>
+                <p>⭐ 獲得した魔法: <span id="earnedMagic">なし</span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLevel = 1;
+        let completedLevels = 0;
+        let progress = 0;
+
+        // 星を生成
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 2 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // レベル選択
+        function selectLevel(level) {
+            currentLevel = level;
+            
+            // レベルボタンの状態更新
+            document.querySelectorAll('.level-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelectorAll('.level-btn')[level - 1].classList.add('active');
+            
+            // レベルコンテンツの表示切り替え
+            document.querySelectorAll('.level-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.getElementById(`level${level}`).classList.remove('hidden');
+        }
+
+        // コードチェック
+        function checkCode(level) {
+            const code = document.getElementById(`code${level}`).value.trim();
+            const resultDiv = document.getElementById(`result${level}`);
+            
+            let isCorrect = false;
+            let message = '';
+            
+            switch(level) {
+                case 1:
+                    if (code.includes('=') && (code.includes('"') || code.includes("'"))) {
+                        isCorrect = true;
+                        message = '🎉 素晴らしい！うさぎが喜んでいます。変数の魔法を覚えました！';
+                    } else {
+                        message = '❌ 変数に値を代入してみてください。例: animal_name = "うさぎ"';
+                    }
+                    break;
+                
+                case 2:
+                    if (code.toLowerCase().includes('if') && code.includes('==') && code.includes('magic')) {
+                        isCorrect = true;
+                        message = '🎉 扉が開きました！条件分岐の魔法を習得しました！';
+                    } else {
+                        message = '❌ if文を使って条件を書いてみてください。例: if password == "magic":';
+                    }
+                    break;
+                
+                case 3:
+                    if (code.toLowerCase().includes('for') && code.includes('range')) {
+                        isCorrect = true;
+                        message = '🎉 美しい花が咲きました！ループの秘術を完全に習得しました！';
+                    } else {
+                        message = '❌ for文とrange()を使ってループを作ってみてください。';
+                    }
+                    break;
+            }
+            
+            // 結果表示
+            resultDiv.className = `result ${isCorrect ? 'success' : 'error'}`;
+            resultDiv.textContent = message;
+            resultDiv.classList.add('show');
+            
+            // 正解時の処理
+            if (isCorrect && !document.getElementById(`level${level}`).classList.contains('completed')) {
+                document.getElementById(`level${level}`).classList.add('completed');
+                completedLevels++;
+                progress = (completedLevels / 3) * 100;
+                
+                // 進捗更新
+                document.getElementById('progressFill').style.width = progress + '%';
+                document.getElementById('completedLevels').textContent = completedLevels;
+                
+                // 魔法の更新
+                const magics = ['変数の魔法', '条件の呪文', 'ループの秘術'];
+                const earnedMagics = [];
+                for (let i = 0; i < completedLevels; i++) {
+                    earnedMagics.push(magics[i]);
+                }
+                document.getElementById('earnedMagic').textContent = 
+                    earnedMagics.length > 0 ? earnedMagics.join(', ') : 'なし';
+                
+                // 全レベル完了時
+                if (completedLevels === 3) {
+                    setTimeout(() => {
+                        alert('🎊 おめでとうございます！あなたは立派なコードウィザードになりました！');
+                    }, 1000);
+                }
+            }
+        }
+
+        // 初期化
+        window.onload = function() {
+            createStars();
+        };
+    </script>
+</body>
+</html>
